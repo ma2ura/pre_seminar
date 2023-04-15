@@ -4,19 +4,20 @@ author: "松浦総一"
 format:
   html:
     html-math-method: katex
-    theme: sandstone
+    theme: minty
     toc: true
     toc-expand: 2
 #    number-sections: true
 #    toc-location: left
 editor: visual
 execute:
-  echo: false
+  # echo: false
   message : false
   warning: false
 ---
 
 ```{r setup}
+#| echo: false
 library(tidyverse)
 library(ggthemes)
 library(ggpubr)
@@ -37,6 +38,127 @@ mystyle <- list (#  ggplotのテーマ
 )
 ```
 
-# 第0章 プレゼミ
+# 第0章 プレゼミとは？
 
 松浦プレゼミ2023では、データに強い経営学部生となるため、データ分析のツールとしてもはやデファクトスタンダードとなっている(いいすぎ)プログラミング言語**R**を使って、様々な分析を行うためのスキルの修得を目指します。
+株価データや会計データ、POSデータといったデータベース以外にも、自分で集めたアンケートのデータや、Webスクレイピングで集めたデータなど、様々なデータを分析することができるスキルは、会計・ファイナンスだけでなく、組織、戦略、マーケティングと様々な分野で役に立つはずです。
+
+
+## なぜR？
+
+**メリット**
+
+- **無料**
+- 学習しやすい・教材たくさん
+- 卒業後も使える (大学で購入しているSPSSとかStataは買うと高い)
+- なんかかっこいい
+
+**デメリット**
+
+- データを命令文で操作するので、見た目にわかりにくい。
+- マウスではなくキーボードで文字を入力してデータを操作するので、キーボード入力に慣れてないと辛い。
+- R言語の文法と単語を覚えなきゃいけない
+
+## MS Excelだとダメなの？
+
+メリット
+
+- みんな使ってる。
+- 就職しても使いそう
+- 画面の表示が理解しやすい
+
+デメリット
+
+- 有料 (立命館大学生のうちは無料で利用可能)
+- マウスで何度もポチポチしないと何も出来ない
+- 過去のExcelファイルを見て、自分が何をしたのか思い出せない
+- アプリが思い、すぐ強制終了する
+- グラフのデザインが悪い
+
+<!-- MS Excelは非常に役立つツールです。
+ただ、データが大きくなるとExcelでは読み込めなくなる(Excelは縦に1,048,576行、横に16,384列が上限)が、RやPythonはPCのスペックに依存するものの、もっといける。
+
+またExcelでグラフを作成しようとすると、メニューからグラフを選び、グラフの元となるデータを選択しといったように、メニューを何度もクリックすることになる。その結果、1週間後に同じグラフを作ろうと思っても、どうやって作ったのか思い出せなかったり、ちょっとデータを追加して新しいグラフを作ろうとすると、またいろんなところをポチポチする必要があり、再現可能性が低い。 -->
+
+## Rでどんなことができる？
+
+### 1. キレイなグラフが書ける。
+
+`iris`という有名なデータを使って、グラフを作ってみます。`iris`は「あやめ」という花の花びらとがく片の長さと幅の4項目と3種類のあやめの分類名の1項目の合計5項目が150件収録されているデータベースです。Rには練習用にもともと入っているので、読み込んでみます。
+
+```{r iris}
+head(iris) # 最初の6行だけ
+```
+
+このように、`Sepal.Length`、`Sepal.Width`、`Petal.Length`、`Petal.Width`、`Species`という5つの項目が入っていることが分かります。Sepalは花びらで、Petalはがく片です。まず花びらの長さ`Sepal.Length`の平均を求めてみましょう。平均を返す関数は`mean()`です。
+
+```{r sepal_length}
+mean(iris$Sepal.Length)
+```
+
+あやめの花びらの長さの平均は、`r mean(iris$Sepal.Length)`であることが分かりました。簡単ですね。
+次に、あやめの種類を表す`Species`にはどんな種類があるのか見てみましょう。
+`Species`に入っている種類を確認するには、`table()`関数を使ってみます。
+
+
+```{r species_table}
+table(iris$Species)
+```
+あやめの種類には、setosa、versicolor, virginicaがあり、それぞれ50個のデータがあることが分かります。
+
+では次にグラフを作成してみます。
+最初に、花びらの長さのヒストグラムを書いてみます。
+ここでは、非常に便利かつ簡単に美しいグラフを作成できるggplot2パッケージを使うために、`tidyverse`パッケージを導入します。
+
+```{r graph_hist_sepal}
+# install.packages("tidyverse") # 1回だけ実行
+library(tidyverse)
+g <- ggplot(iris) + aes(Sepal.Length) + 
+ geom_histogram()
+print(g)
+```
+
+地味なので、グラフを雑誌Economist風にしてみます。
+
+```{r hist_economist}
+g + theme_economist()
+```
+いい感じです。
+次は花びらの長さと幅の散布図を書いてみます。
+`ggplot2`で散布図を書くためには、`aes()`で$x$軸と$y$軸を指定し、`geom_point()`で散布図を指定する。
+
+```{r graph_sepal}
+ggplot(iris) + aes(x = Sepal.Length, y = Sepal.Width) +
+ geom_point() + theme_economist()
+```
+
+カテゴリーを表す変数を`group`と`colour`で指定すると、カテゴリーごとにグループ化して、色分けもしてくれます。ここでは花の種類を表す変数である`Species`ごとに色分けしてみます。
+
+```{r graph_species}
+ggplot(iris) + # データセットirisを指定
+  aes(x = Sepal.Length, # x軸 花びらの幅
+      y = Sepal.Width, # y軸　花びらの幅
+      group = Species, # あやめの種類ごとにグループ
+      color = Species # あやめの種類ごとに色分け
+      ) + 
+      geom_point() + # 散布図を指定
+      theme_economist() # テーマをEconomistに
+```
+
+### 2. 楽にデータ操作ができる
+
+### 3. 
+
+
+
+## 動くグラフも作れる。
+
+グラフを動かせる。
+`plotly`パッケージを使えば簡単。
+
+```{r graph_plotly}
+library(plotly)
+g <- ggplot(iris) + aes(x = Sepal.Length, y = Sepal.Width) +
+ geom_point() + theme_economist()
+ggplotly(g)
+```
