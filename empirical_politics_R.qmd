@@ -144,21 +144,73 @@ ggplot(iris) + # データセットirisを指定
       geom_point() + # 散布図を指定
       theme_economist() # テーマをEconomistに
 ```
-
-### 2. 楽にデータ操作ができる
-
-### 3. 
-
-
-
-## 動くグラフも作れる。
-
-グラフを動かせる。
-`plotly`パッケージを使えば簡単。
+操作できるグラフも作れます。
+`plotly`パッケージを使えば簡単です。
 
 ```{r graph_plotly}
 library(plotly)
 g <- ggplot(iris) + aes(x = Sepal.Length, y = Sepal.Width) +
  geom_point() + theme_economist()
 ggplotly(g)
+```
+
+### 2. 楽にデータ操作ができる
+
+かなり大きなデータやファイルでも、ソースコードによるデータ操作ができるので、いろいろ楽です。
+たとえば、先ほどから使っている`iris`データをいろいろ操作してみましょう。
+
+
+
+### 3. レポート・論文が作れる。
+
+データを分析した結果を表や図としてレポートや論文に載せる場合、MS Excelで作成した図や表を、MS Wordにコピペしてませんか？
+その場合、Wordで書いてたレポートの図表に少し修正を加えることになると、またExcelを開いて修正し、またコピペしたりしてませんか？
+これはミスの元ですし、レポートを2週間後に読んだとして、その図表を作成したExcelがどこにあるのか、またどうやって作ったのか思い出せますか？
+Rなら心配いりません。
+
+**Quarto**や**Rmarkdown**を使ってMarkdownでレポートを書けば、文章作成と図表を同じ場所で作成できます。
+ちなみに、このウェブサイトも**Quarto**を使って作成し、GitHubでウェブサイト公開してます。
+
+例えば、`iris`データで、「あやめ」の種類ごとに、花びらの長さと幅の平均、中央値、標準偏差を計算し、それを表にしたいとしましょう。
+Rなら簡単です。
+
+```{r table_iris}
+library(tidyverse)
+iris %>%
+  dplyr::group_by(Species) %>%
+  dplyr::summarise(
+    花びらの長さの平均 = mean(Sepal.Length),
+    花びらの幅の平均 = mean(Sepal.Width),
+  ) %>%
+  knitr::kable(booktabs = TRUE)
+```
+
+たとえば、「あやめ」の種類ごとにがく片の長さが長いほど、花びらが長くなるかどうかを分析しようと回帰分析を行い、その結果を表にするときも次のように書けばできます。
+
+```{r iris_regress_gtsummary}
+library(gtsummary)
+lm_fit <- lm(Sepal.Length ~ Petal.Length + Species, data = iris)
+tbl_regression(lm_fit, 
+               type = "html", 
+               title = "Regression Results",
+               exponentiate = FALSE,
+               digits = list(all_continuous() ~ 2),
+               add_estimate_to_reference_rows = TRUE,
+               bold_p = TRUE)
+```
+
+他にもこんな感じにできます。
+
+```{r iris_regress_kable}
+library(kableExtra)
+library(broom)
+lm_fit %>%
+  tidy() %>%
+  kable( 
+      caption = "Regression Results", 
+      booktabs = TRUE,
+      digits = c(2, 2, 2, 2)) %>%
+  kable_styling(full_width = FALSE) %>%
+  column_spec(1, bold = TRUE) %>%
+  row_spec(0, bold = TRUE, color = "white", background = "#0073C2")
 ```
