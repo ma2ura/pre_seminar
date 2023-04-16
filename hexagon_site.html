@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Academic Researcher</title>
+	<style>
+		.container {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-items: center;
+			margin-top: 50px;
+		}
+		.hexagon {
+			position: relative;
+			width: 150px;
+			height: 150px;
+			background-color: #0073C2;
+			margin: 25px;
+		}
+		.hexagon:before,
+		.hexagon:after {
+			content: "";
+			position: absolute;
+			width: 0;
+			border-left: 75px solid transparent;
+			border-right: 75px solid transparent;
+		}
+		.hexagon:before {
+			top: -37.5px;
+			border-bottom: 37.5px solid #0073C2;
+		}
+		.hexagon:after {
+			bottom: -37.5px;
+			border-top: 37.5px solid #0073C2;
+		}
+		.text {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			color: #FFFFFF;
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="hexagon">
+			<div class="text">
+				<h1>John Smith</h1>
+				<p>Associate Professor<br>Department of Psychology</p>
+			</div>
+		</div>
+		<div class="hexagon">
+			<div class="text">
+				<h2>About</h2>
+					<p>John Smith is an associate professor in the Department of Psychology at XYZ University. His research interests include cognitive psychology, neuroscience, and computational modeling.</p>
+			</div>
+		</div>
+		<div class="hexagon">
+			<div class="text">
+				<h2>Research</h2>
+					<p>Smith, J., Jones, R., & Doe, J. (2022). A computational model of attentional capture. Journal of Experimental Psychology: General, 151(1), 52-68.</p>
+			</div>
+		</div>
+		<div class="hexagon">
+			<div class="text">
+				<h2>Teaching</h2>
+					<p>Smith, J. (2022). Cognitive Psychology (PSY101). XYZ University.</p>
+			</div>
+		</div>
+		<div class="hexagon">
+			<div class="text">
+				<h2>Contact</h2>
+					<p>Email: john.smith@xyz.edu<br>Office: 123 Main Street, Room 456<br>Phone: 555-555-5555</p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
