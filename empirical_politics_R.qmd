@@ -47,14 +47,15 @@ mystyle <- list (#  ggplotのテーマ
 **Quarto**(クアルト)とは、Markdown記法で書かれた文章の中に、RだけでなくPythonなど他の言語も組み込める便利なツールです。
 
 
-## なぜR？
+## なぜR/Quarto？
 
 **メリット**
 
-- **無料**
+- ぜんぶ**無料**
 - 学習しやすい・教材たくさん
 - 作業履歴が残る
 - 卒業後も使える (大学で購入しているSPSSとかStataは買うと高い)
+- 勉強しやすい
 - なんかかっこいい
 
 
@@ -77,8 +78,30 @@ mystyle <- list (#  ggplotのテーマ
 - 有料 (立命館大学生のうちは無料で利用可能)
 - マウスで何度もポチポチしないと何も出来ない
 - 過去のExcelファイルを見て、自分が何をしたのか思い出せない
+- Excelは大きなデータは扱えない
 - アプリが思い、すぐ強制終了する
 - グラフのデザインが悪い
+
+<!--
+## IBM SPSSではどうか？
+
+メリット
+
+- MS Excelよりも統計分析に強いし正確
+- ビジネスでよく利用されているらしい
+- 難しい統計分析もいくつかクリックするだけで実行できる
+
+デメリット
+
+- かなり高い
+- だいぶRに置き換えられてきている
+
+## STATAではどうか？
+
+- メリット：研究者はみんな使ってる。
+- デメリット：高い。10万超え
+
+-->
 
 <!-- MS Excelは非常に役立つツールです。
 ただ、データが大きくなるとExcelでは読み込めなくなる(Excelは縦に1,048,576行、横に16,384列が上限)が、RやPythonはPCのスペックに依存するものの、もっといける。
@@ -124,7 +147,7 @@ table(iris$Species)
 ```{r graph_hist_sepal}
 # install.packages("tidyverse") # 1回だけ実行
 library(tidyverse)
-g <- ggplot(iris) + aes(Sepal.Length) + 
+g <- ggplot(iris) + aes(Sepal.Length) +
  geom_histogram()
 print(g)
 ```
@@ -133,7 +156,7 @@ print(g)
 例えば、階級幅を$0.5$でヒストグラムを作る場合は、`binwidth = 0.5`のように指定します。
 
 ```{r graph_hist_sepal_bin30}
-g <- ggplot(iris) + aes(Sepal.Length) + 
+g <- ggplot(iris) + aes(Sepal.Length) +
  geom_histogram(binwidth = .5)
 print(g)
 ```
@@ -141,7 +164,7 @@ print(g)
 グラフが黒くて見づらいので、デザインをいじってみます。
 `geom_histogram()`関数の中で、線を黒、中を薄青色に指定します。
 ```{r graph_hist_sepal_color}
-g <- ggplot(iris) + aes(Sepal.Length) + 
+g <- ggplot(iris) + aes(Sepal.Length) +
  geom_histogram(color="black", fill="lightblue",binwidth = .5)
 print(g)
 ```
@@ -151,8 +174,6 @@ print(g)
 ```{r hist_economist}
 g + theme_economist_white() + scale_colour_economist()
 ```
-
-
 
 次は花びらの長さと幅の散布図を書いてみます。
 `ggplot2`で散布図を書くためには、`aes()`で$x$軸と$y$軸を指定し、`geom_point()`で散布図を指定する。
@@ -170,7 +191,7 @@ ggplot(iris) + # データセットirisを指定
       y = Sepal.Width, # y軸　花びらの幅
       group = Species, # あやめの種類ごとにグループ
       color = Species # あやめの種類ごとに色分け
-      ) + 
+      ) +
       geom_point() + # 散布図を指定
       theme_economist() # テーマをEconomistに
 ```
@@ -204,6 +225,7 @@ iris %>%
   dplyr::summarise(
     花びらの長さの平均 = mean(Sepal.Length),
     花びらの幅の平均 = mean(Sepal.Width),
+    花びらの標準偏差 = sd(Sepal.Width)
   ) %>%
   knitr::kable(booktabs = TRUE)
 ```
@@ -218,8 +240,8 @@ $$
 ```{r iris_regress_gtsummary}
 library(gtsummary)
 lm_fit <- lm(Sepal.Length ~ Petal.Length + Species, data = iris)
-tbl_regression(lm_fit, 
-               type = "html", 
+tbl_regression(lm_fit,
+               type = "html",
                title = "Regression Results",
                exponentiate = FALSE,
                digits = list(all_continuous() ~ 2),
@@ -234,8 +256,8 @@ library(kableExtra)
 library(broom)
 lm_fit %>%
   tidy() %>%
-  kable( 
-      caption = "Regression Results", 
+  kable(
+      caption = "Regression Results",
       booktabs = TRUE,
       digits = c(2, 2, 2, 2)) %>%
   kable_styling(full_width = FALSE) %>%
