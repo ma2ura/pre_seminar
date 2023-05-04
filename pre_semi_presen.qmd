@@ -4,7 +4,8 @@ author: "松浦 総一"
 format:
   revealjs:
     html-math-method: katex
-    theme: solarized
+    theme: default
+    transition: convex
 editor: visual
 execute:
   # echo: false
